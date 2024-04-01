@@ -1,0 +1,14 @@
+/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/bin/Debug/net8.0/InMemoryFileSys
+/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/bin/Debug/net8.0/InMemoryFileSys.deps.json
+/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/bin/Debug/net8.0/InMemoryFileSys.runtimeconfig.json
+/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/bin/Debug/net8.0/InMemoryFileSys.dll
+/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/bin/Debug/net8.0/InMemoryFileSys.pdb
+/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/obj/Debug/net8.0/InMemoryFileSys.GeneratedMSBuildEditorConfig.editorconfig
+/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/obj/Debug/net8.0/InMemoryFileSys.AssemblyInfoInputs.cache
+/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/obj/Debug/net8.0/InMemoryFileSys.AssemblyInfo.cs
+/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/obj/Debug/net8.0/InMemoryFileSys.csproj.CoreCompileInputs.cache
+/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/obj/Debug/net8.0/InMemoryFileSys.dll
+/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/obj/Debug/net8.0/refint/InMemoryFileSys.dll
+/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/obj/Debug/net8.0/InMemoryFileSys.pdb
+/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/obj/Debug/net8.0/InMemoryFileSys.genruntimeconfig.cache
+/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/obj/Debug/net8.0/ref/InMemoryFileSys.dll
