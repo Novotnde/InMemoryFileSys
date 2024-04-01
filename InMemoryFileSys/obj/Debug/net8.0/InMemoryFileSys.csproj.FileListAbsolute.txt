@@ -12,3 +12,8 @@
 /Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/obj/Debug/net8.0/InMemoryFileSys.pdb
 /Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/obj/Debug/net8.0/InMemoryFileSys.genruntimeconfig.cache
 /Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/obj/Debug/net8.0/ref/InMemoryFileSys.dll
+/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/bin/Debug/net8.0/Microsoft.Extensions.DependencyInjection.dll
+/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/bin/Debug/net8.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll
+/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/obj/Debug/net8.0/InMemoryFileSys.csproj.AssemblyReference.cache
+/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/obj/Debug/net8.0/InMemoryFileSys.sourcelink.json
+/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/obj/Debug/net8.0/InMemoryFileSys.csproj.CopyComplete

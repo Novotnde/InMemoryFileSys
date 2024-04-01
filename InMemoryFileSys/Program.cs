@@ -1,12 +1,17 @@
-﻿
+﻿using Microsoft.Extensions.DependencyInjection;
+
 namespace InMemoryFileSys
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            var root = DirectoryManager.GetRootDirectory();
 
+            var serviceProvider = new ServiceCollection()
+                .AddSingleton<IClock, SystemClock>()
+                .BuildServiceProvider();
+
+            var root = Directory.Root;
             // Add files and directories
             root.AddEntry("file1.txt", true);
             root.AddEntry("file2.txt", true);
