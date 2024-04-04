@@ -9,6 +9,8 @@ public class Directory : IDirectory
     /// <inheritdoc/>
     public DateTime CreationDate { get; set; }
 
+    // Public property to access the singleton instance
+    public static Directory Root => _root.Value;    
     /// <inheritdoc/>
     public int? Size
     {
@@ -33,12 +35,20 @@ public class Directory : IDirectory
     
     private List<IFileSystemEntry> _entries { get; }
     
-    internal Directory(string? name)
+    // Singleton instance
+    private static readonly Lazy<Directory> _root = new Lazy<Directory>(() => new Directory("/", new SystemClock()));
+    
+    private readonly IClock _clock;
+
+    private Directory(string? name, IClock clock)
     {
+        _clock = clock ?? throw new ArgumentNullException(nameof(clock));
+
         Name = name;
+        CreationDate = _clock.UtcNow;
         _entries = new List<IFileSystemEntry>();
     }
-    
+
     /// <inheritdoc/>
     public void AddEntry(string name, bool isFile)
     {
@@ -77,7 +87,7 @@ public class Directory : IDirectory
     /// <inheritdoc/>
     public string? GetPath(string name)
     {
-        if (name == "/") return DirectoryManager.GetRootDirectory().Name;
+        if (name == "/") return Root.Name;
 
         var parts = name.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
         return FindEntryPathRecursive(this, parts, 0);
@@ -88,25 +98,21 @@ public class Directory : IDirectory
         return new File
         {
             Name = fileName,
-            CreationDate = DateTime.UtcNow
+            CreationDate = _clock.UtcNow
         };
     }
 
     private IFileSystemEntry CreateDirectory(string? dirName)
     {
-        return new Directory(dirName)
-        {
-            CreationDate = DateTime.UtcNow
-        };
+        return new Directory(dirName, _clock);
     }
-
+    
     private bool ContainsEntry(string name)
     {
         var value = _entries.Any(x => x.Name == name);
         return value;
     }
-
-
+    
     private Directory? GetSubDirectory(string? name)
     {
         foreach (var entry in _entries)
