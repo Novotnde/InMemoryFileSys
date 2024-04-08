@@ -17,9 +17,8 @@ namespace InMemoryFileSys.Tests
         [Test]
         public void AddFile_ValidRelativePath_FileAddedSuccessfully()
         {
-            string relativePath = "/test.txt";
+            var relativePath = "/test.txt";
 
-            // Act
             var file = _rootDirectory.AddFile(relativePath);
 
             var path = file.Path;
@@ -30,10 +29,8 @@ namespace InMemoryFileSys.Tests
         [Test]
         public void AddFile_NullOrWhiteSpaceRelativePath_ThrowsArgumentException()
         {
-            // Arrange
             string relativePath = null;
 
-            // Act & Assert
             Assert.Throws<ArgumentException>(() => _rootDirectory.AddFile(relativePath));
         }
 
@@ -41,11 +38,9 @@ namespace InMemoryFileSys.Tests
         public void AddDirectory_ValidRelativePath_DirectoryAddedSuccessfully()
         {
 
-            string relativePath = "newDirectory";
-
+            var relativePath = "newDirectory";
 
             var newDirectory = _rootDirectory.AddDirectory(relativePath);
-
 
             var directoryPath = newDirectory.Path;
             Assert.IsNotNull(directoryPath);
@@ -86,24 +81,20 @@ namespace InMemoryFileSys.Tests
         [Test]
         public void AddDuplicateFile_ThrowsArgumentException()
         {
-            // Arrange
             _rootDirectory.AddFile("file1.txt");
 
-            // Act & Assert
             Assert.Throws<ArgumentException>(() => _rootDirectory.AddFile("file1.txt"));
         }
 
         [Test]
         public void AddNonExistentFile_ThrowsArgumentException()
         {
-            // Act & Assert
             Assert.Throws<ArgumentException>(() => _rootDirectory.AddFile(""));
         }
 
         [Test]
         public void AddNonExistentDirectory_ThrowsArgumentException()
         {
-            // Act & Assert
             Assert.Throws<ArgumentException>(() => _rootDirectory.AddDirectory(""));
         }
     }
