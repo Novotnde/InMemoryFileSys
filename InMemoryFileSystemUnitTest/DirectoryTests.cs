@@ -1,43 +1,110 @@
-using Moq;
-using InMemoryFileSys;
+using NUnit.Framework;
+using System;
 
-namespace InMemoryFileSystemUnitTest
+namespace InMemoryFileSys.Tests
 {
+    [TestFixture]
     public class DirectoryTests
     {
-        private IDirectory _rootDirectory;
-        private Mock<IClock> _clockMock;
+        private Directory _rootDirectory;
 
         [SetUp]
         public void Setup()
         {
-            var mockClock = new Mock<IClock>();
-            mockClock.Setup(clock => clock.UtcNow).Returns(new DateTime(2024, 4, 1));
-
-            _rootDirectory = InMemoryFileSys.Directory.Root;
-        }
-        
-        [Test]
-        public void AddEntry_AddsFileToDirectory()
-        {
-            var expectedFileName = "file1.txt";
-
-            _rootDirectory.AddEntry(expectedFileName, isFile: true);
-
-            var path = _rootDirectory.GetPath(expectedFileName);
-            Assert.AreEqual("/" + expectedFileName, path);
+            _rootDirectory = Directory.Root;
         }
 
         [Test]
-        public void GetPath_ReturnsCorrectPathForFile()
+        public void AddFile_ValidRelativePath_FileAddedSuccessfully()
         {
-            _rootDirectory.AddEntry("subdir", isFile: false);
-            _rootDirectory.AddEntry("subdir/file.txt", isFile: true);
+            string relativePath = "/test.txt";
 
-            var path = _rootDirectory.GetPath("subdir/file.txt");
+            // Act
+            var file = _rootDirectory.AddFile(relativePath);
 
-            Assert.AreEqual("/subdir/file.txt", path);
+            var path = file.Path;
+            Assert.IsNotNull(path);
+            Assert.IsTrue(path.EndsWith(relativePath));
         }
 
+        [Test]
+        public void AddFile_NullOrWhiteSpaceRelativePath_ThrowsArgumentException()
+        {
+            // Arrange
+            string relativePath = null;
+
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => _rootDirectory.AddFile(relativePath));
+        }
+
+        [Test]
+        public void AddDirectory_ValidRelativePath_DirectoryAddedSuccessfully()
+        {
+
+            string relativePath = "newDirectory";
+
+
+            var newDirectory = _rootDirectory.AddDirectory(relativePath);
+
+
+            var directoryPath = newDirectory.Path;
+            Assert.IsNotNull(directoryPath);
+            Assert.IsTrue(directoryPath.EndsWith(relativePath));
+            Assert.IsInstanceOf<Directory>(newDirectory);
+        }
+
+        [Test]
+        public void AddDirectory_NullOrWhiteSpaceRelativePath_ThrowsArgumentException()
+        {
+            string relativePath = null;
+
+            Assert.Throws<ArgumentException>(() => _rootDirectory.AddDirectory(relativePath));
+        }
+
+        [Test]
+        public void Path_RootDirectory_ReturnsRootName()
+        {
+            var path = _rootDirectory.Path;
+
+            Assert.AreEqual("/", path);
+        }
+
+        [Test]
+        public void Path_NestedDirectory_ReturnsCorrectPath()
+        {
+
+            var folder1 = _rootDirectory.AddDirectory("folder1");
+            var folder2 = folder1.AddDirectory("folder2");
+            folder2.AddFile("file.txt");
+
+            var path = folder2.Path;
+
+            Assert.IsNotNull(path);
+            Assert.AreEqual("/folder1/folder2", path);
+        }
+
+        [Test]
+        public void AddDuplicateFile_ThrowsArgumentException()
+        {
+            // Arrange
+            _rootDirectory.AddFile("file1.txt");
+
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => _rootDirectory.AddFile("file1.txt"));
+        }
+
+        [Test]
+        public void AddNonExistentFile_ThrowsArgumentException()
+        {
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => _rootDirectory.AddFile(""));
+        }
+
+        [Test]
+        public void AddNonExistentDirectory_ThrowsArgumentException()
+        {
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => _rootDirectory.AddDirectory(""));
+        }
     }
 }

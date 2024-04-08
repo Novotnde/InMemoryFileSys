@@ -1,4 +1,4 @@
-namespace InMemoryFileSys;
+namespace InMemoryFileSys.Contracts;
 
 /// <summary>
 /// Represents a directory in the file system.
@@ -6,16 +6,15 @@ namespace InMemoryFileSys;
 public interface IDirectory : IFileSystemEntry
 {
     /// <summary>
-    /// Adds a new entry (file or directory) to the directory.
+    /// Adds a new file.
     /// </summary>
-    /// <param name="name">The name of the entry.</param>
-    /// <param name="isFile">True if the entry being added is a file; otherwise, false for a directory.</param>
-    public void AddEntry(string name, bool isFile);
+    /// <param name="relativePath"></param>
+    public IFile AddFile(string relativePath);
     
     /// <summary>
-    /// Gets the full path of an entry within the directory.
+    /// Adds a new  directory.
     /// </summary>
-    /// <param name="name">The name of the entry.</param>
-    /// <returns>The full path of the entry if found; otherwise, null.</returns>
-    public string? GetPath(string name);
+    /// <param name="relativePath"></param>
+    /// <returns></returns>
+    public IDirectory AddDirectory(string relativePath);
 }

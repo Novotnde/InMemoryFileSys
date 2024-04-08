@@ -12,8 +12,13 @@ public class File : IFile
     /// <inheritdoc/>
     public int? Size { get; }
 
+    public string Path { get; }
+
     /// <inheritdoc/>
     public byte[] Content { get; set; }
 
-
+    public File(string relativePath)
+    {
+        Path = relativePath;
+    }
 }

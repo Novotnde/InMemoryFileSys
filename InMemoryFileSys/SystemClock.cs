@@ -1,3 +1,5 @@
+using InMemoryFileSys.Contracts;
+
 namespace InMemoryFileSys;
 
 public class SystemClock : IClock
