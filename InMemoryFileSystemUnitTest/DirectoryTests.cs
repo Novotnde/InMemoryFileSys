@@ -17,9 +17,9 @@ namespace InMemoryFileSys.Tests
         [Test]
         public void AddFile_ValidRelativePath_FileAddedSuccessfully()
         {
-            var relativePath = "/test.txt";
+            var relativePath = "test.txt";
 
-            var file = _rootDirectory.AddFile(relativePath);
+            var file = _rootDirectory.CreateFile(relativePath);
 
             var path = file.Path;
             Assert.IsNotNull(path);
@@ -31,7 +31,7 @@ namespace InMemoryFileSys.Tests
         {
             string relativePath = null;
 
-            Assert.Throws<ArgumentException>(() => _rootDirectory.AddFile(relativePath));
+            Assert.Throws<ArgumentException>(() => _rootDirectory.CreateFile(relativePath));
         }
 
         [Test]
@@ -40,7 +40,7 @@ namespace InMemoryFileSys.Tests
 
             var relativePath = "newDirectory";
 
-            var newDirectory = _rootDirectory.AddDirectory(relativePath);
+            var newDirectory = _rootDirectory.CreateDirectory(relativePath);
 
             var directoryPath = newDirectory.Path;
             Assert.IsNotNull(directoryPath);
@@ -53,7 +53,7 @@ namespace InMemoryFileSys.Tests
         {
             string relativePath = null;
 
-            Assert.Throws<ArgumentException>(() => _rootDirectory.AddDirectory(relativePath));
+            Assert.Throws<ArgumentException>(() => _rootDirectory.CreateDirectory(relativePath));
         }
 
         [Test]
@@ -68,9 +68,9 @@ namespace InMemoryFileSys.Tests
         public void Path_NestedDirectory_ReturnsCorrectPath()
         {
 
-            var folder1 = _rootDirectory.AddDirectory("folder1");
-            var folder2 = folder1.AddDirectory("folder2");
-            folder2.AddFile("file.txt");
+            var folder1 = _rootDirectory.CreateDirectory("folder1");
+            var folder2 = folder1.CreateDirectory("folder2");
+            folder2.CreateFile("file.txt");
 
             var path = folder2.Path;
 
@@ -81,21 +81,21 @@ namespace InMemoryFileSys.Tests
         [Test]
         public void AddDuplicateFile_ThrowsArgumentException()
         {
-            _rootDirectory.AddFile("file1.txt");
+            _rootDirectory.CreateFile("file1.txt");
 
-            Assert.Throws<ArgumentException>(() => _rootDirectory.AddFile("file1.txt"));
+            Assert.Throws<ArgumentException>(() => _rootDirectory.CreateFile("file1.txt"));
         }
 
         [Test]
         public void AddNonExistentFile_ThrowsArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => _rootDirectory.AddFile(""));
+            Assert.Throws<ArgumentException>(() => _rootDirectory.CreateFile(""));
         }
 
         [Test]
         public void AddNonExistentDirectory_ThrowsArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => _rootDirectory.AddDirectory(""));
+            Assert.Throws<ArgumentException>(() => _rootDirectory.CreateDirectory(""));
         }
     }
 }

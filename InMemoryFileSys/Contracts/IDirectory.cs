@@ -9,12 +9,12 @@ public interface IDirectory : IFileSystemEntry
     /// Adds a new file.
     /// </summary>
     /// <param name="relativePath"></param>
-    public IFile AddFile(string relativePath);
+    public IFile CreateFile(string relativePath);
     
     /// <summary>
     /// Adds a new  directory.
     /// </summary>
     /// <param name="relativePath"></param>
     /// <returns></returns>
-    public IDirectory AddDirectory(string relativePath);
+    public IDirectory CreateDirectory(string relativePath);
 }

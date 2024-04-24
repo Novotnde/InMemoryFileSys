@@ -24,12 +24,14 @@ public class Directory : IDirectory
     // Singleton instance
     // Singleton instance
     private static readonly Lazy<Directory> _root = 
-        new(() => new Directory(rootName, new SystemClock(), null));    
+        new(() => new Directory(rootName, new SystemClock(), null));
+
     private readonly IClock _clock;
 
     private readonly Directory? _parentDirectory;
     
     private const string slash = "/";
+
     private const string rootName = "/";
     
     private Directory(string? name, IClock clock, Directory? parentDirectory)
@@ -41,80 +43,72 @@ public class Directory : IDirectory
         
         _parentDirectory = parentDirectory;
 
-        if (parentDirectory != null)
+        if (parentDirectory == null)
         {
-            if (parentDirectory.Path == slash)
-            {
-                Path = parentDirectory.Path + name;
-            }
-            else
-            {
-                Path = parentDirectory.Path + slash + name;
-            }
+            Path = name;
         }
         else
         {
-            Path =  name;
+            Path = parentDirectory.Path.EndsWith(slash) ? parentDirectory.Path + name : parentDirectory.Path + slash + name;
         }
-        
+
         _entries = new Dictionary<string, IFileSystemEntry>();
     }
 
     /// <inheritdoc/>
-
-    /// <inheritdoc/>
-    public IFile AddFile(string relativePath)
+    public IFile CreateFile(string fileName)
     {
-        if (string.IsNullOrWhiteSpace(relativePath))
-            throw new ArgumentException("File name cannot be null or whitespace.");
+        // Check if the file name is null, empty, or contains slashes (which are not allowed)
+        if (string.IsNullOrWhiteSpace(fileName) || fileName.Contains(slash))
+            throw new ArgumentException("File name cannot be null, empty, or contain directory separators.");
 
-        if (relativePath.StartsWith(slash))
+        // Check if the file already exists in this directory
+        if (_entries.ContainsKey(fileName))
         {
-            relativePath = relativePath.Substring(1);
+            throw new ArgumentException("A file with the same name already exists in this directory.");
         }
 
-        if (_entries.ContainsKey(relativePath))
-        {
-            throw new ArgumentException("File already exists at the specified path.");
-        }
-
-        var parts = relativePath.Split(slash);
-
-        var directoryPath = string.Join(slash, parts.Take(parts.Length - 1));
-        var fileName = parts.Last();
-
-        var directory = GetDirectoryOrCreate(directoryPath);
-        var file = new File(directory.Path + relativePath)
+        // Create the new file
+        var file = new File(Path + slash + fileName)
         {
             Name = fileName,
             CreationDate = _clock.UtcNow,
+            // Assuming a default size or some means to set the size here
         };
-        directory._entries[fileName] = file;
-        directory.UpdateSize(file.Size ?? 0);
+
+        // Add the file to the current directory's entries
+        _entries[fileName] = file;
+        UpdateSize(file.Size ?? 0);  // Update the size of the directory, if applicable
 
         return file; // Return the newly added file.
     }
 
     /// <inheritdoc/>
 
-    public IDirectory AddDirectory(string relativePath)
+    public IDirectory CreateDirectory(string directoryName)
     {
-        if (string.IsNullOrWhiteSpace(relativePath))
-            throw new ArgumentException("Directory path cannot be null or whitespace.");
+        // Check if the directory name is null, empty, or contains slashes (which are not allowed)
+        if (string.IsNullOrWhiteSpace(directoryName) || directoryName.Contains(slash))
+            throw new ArgumentException("Directory name cannot be null, empty, or contain directory separators.");
 
-        var parts = relativePath.Split(slash);
-        var directoryPath = string.Join(slash, parts.Take(parts.Length - 1));
-        var directoryName = parts[^1];
+        // Check if a directory with the same name already exists
+        if (_entries.ContainsKey(directoryName))
+        {
+            throw new ArgumentException("A directory with the same name already exists in this directory.");
+        }
 
-        var parentDirectory = GetDirectoryOrCreate(directoryPath);
-        var newDirectory = new Directory(directoryName, _clock, parentDirectory);
-        parentDirectory._entries[directoryName] = newDirectory;
-    
-        newDirectory.Name = directoryName;
+        // Create the new directory as a child of the current directory
+        var newDirectory = new Directory(directoryName, _clock, this)
+        {
+            Name = directoryName
+        };
 
-        return newDirectory;
+        // Add the new directory to the current directory's entries
+        _entries[directoryName] = newDirectory;
+
+        return newDirectory; // Return the newly added directory.
     }
-    
+
     private Directory GetDirectoryOrCreate(string path)
     {
         var currentDir = this;
