@@ -23,7 +23,6 @@ namespace InMemoryFileSys
             var subsubdir = subdir2.CreateDirectory("subsubdir");
             subsubdir.CreateFile("file4.txt");
 
-            // Handle exceptions and try to create duplicates
             try
             {
                 root.CreateFile("file1.txt");

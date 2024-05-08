@@ -19,6 +19,9 @@ public interface IFileSystemEntry
     /// The size of the file system entry.
     /// </summary>
     public int? Size { get; }
-    
+
+    /// <summary>
+    /// 
+    /// </summary>
     public string Path { get; }
 }

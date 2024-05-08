@@ -1,5 +1,6 @@
-using NUnit.Framework;
-using System;
+
+
+using System.IO;
 
 namespace InMemoryFileSys.Tests
 {
@@ -23,7 +24,7 @@ namespace InMemoryFileSys.Tests
 
             var path = file.Path;
             Assert.IsNotNull(path);
-            Assert.IsTrue(path.EndsWith(relativePath));
+            Assert.That(path, Is.EqualTo("/test.txt"));
         }
 
         [Test]
@@ -44,8 +45,9 @@ namespace InMemoryFileSys.Tests
 
             var directoryPath = newDirectory.Path;
             Assert.IsNotNull(directoryPath);
-            Assert.IsTrue(directoryPath.EndsWith(relativePath));
             Assert.IsInstanceOf<Directory>(newDirectory);
+            Assert.That(directoryPath, Is.EqualTo("/newDirectory"));
+
         }
 
         [Test]
@@ -75,7 +77,8 @@ namespace InMemoryFileSys.Tests
             var path = folder2.Path;
 
             Assert.IsNotNull(path);
-            Assert.AreEqual("/folder1/folder2", path);
+            Assert.That(path, Is.EqualTo("/folder1/folder2"));
+
         }
 
         [Test]
