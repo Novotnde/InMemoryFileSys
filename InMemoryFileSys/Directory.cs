@@ -1,3 +1,5 @@
+using InMemoryFileSys.Contracts;
+
 namespace InMemoryFileSys;
 
 /// <inheritdoc/>
@@ -10,139 +12,101 @@ public class Directory : IDirectory
     public DateTime CreationDate { get; set; }
 
     // Public property to access the singleton instance
-    public static Directory Root => _root.Value;    
+    public static Directory Root => _root.Value;   
+    
     /// <inheritdoc/>
-    public int? Size
-    {
-        get
-        {
-            int totalSize = 0;
-            foreach (var entry in _entries)
-            {
-                if (entry is IFile file)
-                {
-                    totalSize += file.Size ?? 0;
-                }
-                else if (entry is IDirectory directory)
-                {
-                    totalSize += directory.Size ?? 0;
-                }
-            }
+    public int? Size { get; private set; }
+   
+    public string Path { get; }
 
-            return totalSize;
-        }
-    }
+    private readonly Dictionary<string, IFileSystemEntry> _entries;
     
-    private List<IFileSystemEntry> _entries { get; }
-    
-    // Singleton instance
-    private static readonly Lazy<Directory> _root = new Lazy<Directory>(() => new Directory("/", new SystemClock()));
-    
+    private static readonly Lazy<Directory> _root = 
+        new(() => new Directory(slash, new SystemClock(), null));
+
     private readonly IClock _clock;
 
-    private Directory(string? name, IClock clock)
+    private readonly Directory? _parentDirectory;
+    
+    private const string slash = "/";
+    
+    private Directory(string name, IClock clock, Directory? parentDirectory)
     {
         _clock = clock ?? throw new ArgumentNullException(nameof(clock));
 
         Name = name;
         CreationDate = _clock.UtcNow;
-        _entries = new List<IFileSystemEntry>();
-    }
+        
+        _parentDirectory = parentDirectory;
 
-    /// <inheritdoc/>
-    public void AddEntry(string name, bool isFile)
-    {
-        if (ContainsEntry(name))
-            return;
-
-        string?[] parts = name.Split('/');
-        if (parts.Length == 1 && isFile)
+        if (parentDirectory == null)
         {
-            _entries.Add(CreateFile(name));
-            return;
+            Name = name; 
+            Path = slash;
         }
-
-        var currentDir = this;
-        foreach (var part in parts)
+        else
         {
-            if (string.IsNullOrEmpty(part))
-                continue;
-
-            var subDir = currentDir.GetSubDirectory(part);
-            if (subDir == null)
+            if (string.IsNullOrWhiteSpace(name))
             {
-                if (!isFile)
-                {
-                    currentDir._entries.Add(CreateDirectory(part));
-                }
-                else
-                {
-                    currentDir._entries.Add(CreateFile(part));
-                }
+                throw new ArgumentException("Directory name must not be null or empty for non-root directories.");
             }
-            currentDir = subDir;
+            Name = name;
+            Path = parentDirectory.Path.EndsWith(slash) ? parentDirectory.Path + name : parentDirectory.Path + slash + name;
         }
+
+        _entries = new Dictionary<string, IFileSystemEntry>();
     }
 
     /// <inheritdoc/>
-    public string? GetPath(string name)
+    public IFile CreateFile(string fileName)
     {
-        if (name == "/") return Root.Name;
+        if (string.IsNullOrWhiteSpace(fileName) || fileName.Contains(slash))
+            throw new ArgumentException("File name cannot be null, empty, or contain directory separators.");
 
-        var parts = name.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-        return FindEntryPathRecursive(this, parts, 0);
-    }
-    
-    private IFileSystemEntry CreateFile(string? fileName)
-    {
-        return new File
+        if (_entries.ContainsKey(fileName))
+        {
+            throw new ArgumentException("A file with the same name already exists in this directory.");
+        }
+
+        var fullPath = Path.EndsWith(slash) ? Path + fileName : Path + slash + fileName;
+
+        var file = new File(fullPath)
         {
             Name = fileName,
-            CreationDate = _clock.UtcNow
+            CreationDate = _clock.UtcNow,
         };
+
+        _entries[fileName] = file;
+        UpdateSize(file.Size ?? 0);  
+        return file; 
     }
 
-    private IFileSystemEntry CreateDirectory(string? dirName)
+    /// <inheritdoc/>
+
+    public IDirectory CreateDirectory(string directoryName)
     {
-        return new Directory(dirName, _clock);
-    }
-    
-    private bool ContainsEntry(string name)
-    {
-        var value = _entries.Any(x => x.Name == name);
-        return value;
-    }
-    
-    private Directory? GetSubDirectory(string? name)
-    {
-        foreach (var entry in _entries)
+        if (string.IsNullOrWhiteSpace(directoryName) || directoryName.Contains(slash))
+            throw new ArgumentException("Directory name cannot be null, empty, or contain directory separators.");
+
+        if (_entries.ContainsKey(directoryName))
         {
-            if (entry is Directory directory && directory.Name == name)
-            {
-                return directory;
-            }
+            throw new ArgumentException("A directory with the same name already exists in this directory.");
         }
 
-        return null;
-    }
-
-    private string? FindEntryPathRecursive(Directory directory, string[] parts, int index)
-    {
-        if (index >= parts.Length) return null;
-
-        var currentPart = parts[index];
-
-        var item = directory._entries.FirstOrDefault(x => x.Name == currentPart);
-
-        if (index == parts.Length - 1) return item != null ? "/" + item.Name : "No file found";
-
-        if (item is Directory subdirectory)
+        var newDirectory = new Directory(directoryName, _clock, this)
         {
-            var subdirectoryPath = FindEntryPathRecursive(subdirectory, parts, index + 1);
-            return subdirectoryPath != null ? "/" + item.Name + subdirectoryPath : null;
-        }
+            Name = directoryName
+        };
 
-        return null;
+        _entries[directoryName] = newDirectory;
+
+        return newDirectory; 
     }
 
+
+    private void UpdateSize(int fileSize)
+    {
+        Size += fileSize;
+        _parentDirectory?.UpdateSize(fileSize);
+    }
 }

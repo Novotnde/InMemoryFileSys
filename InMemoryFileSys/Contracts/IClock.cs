@@ -1,4 +1,4 @@
-namespace InMemoryFileSys;
+namespace InMemoryFileSys.Contracts;
 
 public interface IClock
 {

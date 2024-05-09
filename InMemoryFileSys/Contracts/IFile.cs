@@ -1,3 +1,5 @@
+using InMemoryFileSys.Contracts;
+
 namespace InMemoryFileSys;
 
 /// <summary>

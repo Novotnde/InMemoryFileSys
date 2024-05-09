@@ -1,43 +1,90 @@
-using Moq;
-using InMemoryFileSys;
-
-namespace InMemoryFileSystemUnitTest
+namespace InMemoryFileSys.Tests
 {
+    [TestFixture]
     public class DirectoryTests
     {
-        private IDirectory _rootDirectory;
-        private Mock<IClock> _clockMock;
+        private Directory _rootDirectory;
 
         [SetUp]
         public void Setup()
         {
-            var mockClock = new Mock<IClock>();
-            mockClock.Setup(clock => clock.UtcNow).Returns(new DateTime(2024, 4, 1));
-
-            _rootDirectory = InMemoryFileSys.Directory.Root;
-        }
-        
-        [Test]
-        public void AddEntry_AddsFileToDirectory()
-        {
-            var expectedFileName = "file1.txt";
-
-            _rootDirectory.AddEntry(expectedFileName, isFile: true);
-
-            var path = _rootDirectory.GetPath(expectedFileName);
-            Assert.AreEqual("/" + expectedFileName, path);
+            _rootDirectory = Directory.Root;
         }
 
         [Test]
-        public void GetPath_ReturnsCorrectPathForFile()
+        public void AddFile_ValidRelativePath_FileAddedSuccessfully()
         {
-            _rootDirectory.AddEntry("subdir", isFile: false);
-            _rootDirectory.AddEntry("subdir/file.txt", isFile: true);
+            var file = _rootDirectory.CreateFile("test.txt");
 
-            var path = _rootDirectory.GetPath("subdir/file.txt");
-
-            Assert.AreEqual("/subdir/file.txt", path);
+            var path = file.Path;
+            Assert.IsNotNull(path);
+            Assert.That(path, Is.EqualTo("/test.txt"));
         }
 
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" ")]
+        public void CreateFile_InvalidName_ThrowsArgumentException(string fileName)
+        {
+            Assert.Throws<ArgumentException>(() => _rootDirectory.CreateFile(fileName));
+        }
+
+        [Test]
+        public void AddDirectory_ValidRelativePath_DirectoryAddedSuccessfully()
+        {
+
+            var directory = _rootDirectory.CreateDirectory("newDirectory");
+
+            Assert.AreEqual("/newDirectory", directory.Path);
+        }
+
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" ")]
+        public void CreateDirectory_InvalidName_ThrowsArgumentException(string directoryName)
+        {
+            Assert.Throws<ArgumentException>(() => _rootDirectory.CreateDirectory(directoryName));
+        }
+
+        [Test]
+        public void Path_RootDirectory_ReturnsRootName()
+        {
+            var path = _rootDirectory.Path;
+
+            Assert.AreEqual("/", path);
+        }
+
+        [Test]
+        public void Path_NestedDirectory_ReturnsCorrectPath()
+        {
+            var folder1 = _rootDirectory.CreateDirectory("folder1");
+            var folder2 = folder1.CreateDirectory("folder2");
+            folder2.CreateFile("file.txt");
+
+            var path = folder2.Path;
+
+            Assert.IsNotNull(path);
+            Assert.That(path, Is.EqualTo("/folder1/folder2"));
+        }
+
+        [Test]
+        public void AddDuplicateFile_ThrowsArgumentException()
+        {
+            _rootDirectory.CreateFile("file1.txt");
+
+            Assert.Throws<ArgumentException>(() => _rootDirectory.CreateFile("file1.txt"));
+        }
+
+        [Test]
+        public void AddNonExistentFile_ThrowsArgumentException()
+        {
+            Assert.Throws<ArgumentException>(() => _rootDirectory.CreateFile(""));
+        }
+
+        [Test]
+        public void AddNonExistentDirectory_ThrowsArgumentException()
+        {
+            Assert.Throws<ArgumentException>(() => _rootDirectory.CreateDirectory(""));
+        }
     }
 }

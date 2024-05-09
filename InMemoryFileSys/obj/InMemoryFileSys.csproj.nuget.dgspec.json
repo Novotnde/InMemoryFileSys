@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/InMemoryFileSys.csproj": {}
+    "/Users/denisa/RiderProjects/chess/InMemoryFileSys/InMemoryFileSys/InMemoryFileSys.csproj": {}
   },
   "projects": {
-    "/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/InMemoryFileSys.csproj": {
+    "/Users/denisa/RiderProjects/chess/InMemoryFileSys/InMemoryFileSys/InMemoryFileSys.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/InMemoryFileSys.csproj",
+        "projectUniqueName": "/Users/denisa/RiderProjects/chess/InMemoryFileSys/InMemoryFileSys/InMemoryFileSys.csproj",
         "projectName": "InMemoryFileSys",
-        "projectPath": "/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/InMemoryFileSys.csproj",
+        "projectPath": "/Users/denisa/RiderProjects/chess/InMemoryFileSys/InMemoryFileSys/InMemoryFileSys.csproj",
         "packagesPath": "/Users/denisa/.nuget/packages/",
-        "outputPath": "/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/obj/",
+        "outputPath": "/Users/denisa/RiderProjects/chess/InMemoryFileSys/InMemoryFileSys/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/denisa/.nuget/NuGet/NuGet.Config"

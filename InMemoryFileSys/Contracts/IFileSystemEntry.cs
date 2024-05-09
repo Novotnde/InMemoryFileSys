@@ -1,4 +1,4 @@
-namespace InMemoryFileSys;
+namespace InMemoryFileSys.Contracts;
 
 /// <summary>
 /// Represents an entry in the file system.
@@ -19,4 +19,9 @@ public interface IFileSystemEntry
     /// The size of the file system entry.
     /// </summary>
     public int? Size { get; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public string Path { get; }
 }

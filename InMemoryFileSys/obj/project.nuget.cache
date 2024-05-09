@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ZMNIvAqDNK6BaIQKfZ1v9D0B+u2ZK8+0mlqkBjsLGB83mVAWg59rIRjIeaz3/LoVaAPfWx3gW17rg0KoEns90A==",
+  "dgSpecHash": "tdaXUF5aY8/6ULiEO+jAfSKcPJmoBoPDnbahDefAeYcoVclsmJHQ0DOfNH2Fxm9bG8m2E2/maI+3AD5Hd4jY9w==",
   "success": true,
-  "projectFilePath": "/Users/denisa/repo/InMemoryFileSys/InMemoryFileSys/InMemoryFileSys.csproj",
+  "projectFilePath": "/Users/denisa/RiderProjects/chess/InMemoryFileSys/InMemoryFileSys/InMemoryFileSys.csproj",
   "expectedPackageFiles": [
     "/Users/denisa/.nuget/packages/microsoft.extensions.dependencyinjection/9.0.0-preview.2.24128.5/microsoft.extensions.dependencyinjection.9.0.0-preview.2.24128.5.nupkg.sha512",
     "/Users/denisa/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/9.0.0-preview.2.24128.5/microsoft.extensions.dependencyinjection.abstractions.9.0.0-preview.2.24128.5.nupkg.sha512"

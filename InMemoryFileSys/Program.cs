@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using InMemoryFileSys.Contracts;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace InMemoryFileSys
 {
@@ -12,31 +13,37 @@ namespace InMemoryFileSys
                 .BuildServiceProvider();
 
             var root = Directory.Root;
-            // Add files and directories
-            root.AddEntry("file1.txt", true);
-            root.AddEntry("file2.txt", true);
-            root.AddEntry("subdir1", false);
-            root.AddEntry("subdir1/file3.txt", true);
-            root.AddEntry("subdir2", false);
-            root.AddEntry("subdir2/subsubdir", false);
-            root.AddEntry("subdir2/subsubdir/file4.txt", true);
+            root.CreateFile("file1.txt");
+            root.CreateFile("file2.txt");
 
-            // Test GetPath method with various scenarios
-            Console.WriteLine(root.GetPath("file1.txt")); // Should output: /file1.txt
-            Console.WriteLine(root.GetPath("file3.txt")); // Should output: No file found
-            Console.WriteLine(root.GetPath("subdir1/file3.txt")); // Should output: /subdir1/file3.txt
-            Console.WriteLine(root.GetPath("subdir2/subsubdir/file4.txt")); // Should output: /subdir2/subsubdir/file4.txt
+            var subdir1 = root.CreateDirectory("subdir1");
+            subdir1.CreateFile("file3.txt");
 
-            // Add duplicate file
-            root.AddEntry("file1.txt", true);
+            var subdir2 = root.CreateDirectory("subdir2");
+            var subsubdir = subdir2.CreateDirectory("subsubdir");
+            subsubdir.CreateFile("file4.txt");
 
-            // Access non-existent file
-            Console.WriteLine(root.GetPath("file5.txt")); 
+            try
+            {
+                root.CreateFile("file1.txt");
+            }
+            catch (ArgumentException e)
+            {
+                Console.WriteLine($"Failed to add duplicate file: {e.Message}");
+            }
 
-            // Print root directory size
+            try
+            {
+                root.CreateFile("");
+            }
+            catch (ArgumentException e)
+            {
+                Console.WriteLine($"Failed to add file: {e.Message}");
+            }
+
             Console.WriteLine($"Root directory size: {root.Size} bytes");
+            Console.ReadLine();
 
-            Console.ReadLine(); 
         }
     }
 }
