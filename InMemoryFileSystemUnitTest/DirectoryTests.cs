@@ -1,7 +1,3 @@
-
-
-using System.IO;
-
 namespace InMemoryFileSys.Tests
 {
     [TestFixture]
@@ -18,44 +14,36 @@ namespace InMemoryFileSys.Tests
         [Test]
         public void AddFile_ValidRelativePath_FileAddedSuccessfully()
         {
-            var relativePath = "test.txt";
-
-            var file = _rootDirectory.CreateFile(relativePath);
+            var file = _rootDirectory.CreateFile("test.txt");
 
             var path = file.Path;
             Assert.IsNotNull(path);
             Assert.That(path, Is.EqualTo("/test.txt"));
         }
 
-        [Test]
-        public void AddFile_NullOrWhiteSpaceRelativePath_ThrowsArgumentException()
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" ")]
+        public void CreateFile_InvalidName_ThrowsArgumentException(string fileName)
         {
-            string relativePath = null;
-
-            Assert.Throws<ArgumentException>(() => _rootDirectory.CreateFile(relativePath));
+            Assert.Throws<ArgumentException>(() => _rootDirectory.CreateFile(fileName));
         }
 
         [Test]
         public void AddDirectory_ValidRelativePath_DirectoryAddedSuccessfully()
         {
 
-            var relativePath = "newDirectory";
+            var directory = _rootDirectory.CreateDirectory("newDirectory");
 
-            var newDirectory = _rootDirectory.CreateDirectory(relativePath);
-
-            var directoryPath = newDirectory.Path;
-            Assert.IsNotNull(directoryPath);
-            Assert.IsInstanceOf<Directory>(newDirectory);
-            Assert.That(directoryPath, Is.EqualTo("/newDirectory"));
-
+            Assert.AreEqual("/newDirectory", directory.Path);
         }
 
-        [Test]
-        public void AddDirectory_NullOrWhiteSpaceRelativePath_ThrowsArgumentException()
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" ")]
+        public void CreateDirectory_InvalidName_ThrowsArgumentException(string directoryName)
         {
-            string relativePath = null;
-
-            Assert.Throws<ArgumentException>(() => _rootDirectory.CreateDirectory(relativePath));
+            Assert.Throws<ArgumentException>(() => _rootDirectory.CreateDirectory(directoryName));
         }
 
         [Test]
@@ -69,7 +57,6 @@ namespace InMemoryFileSys.Tests
         [Test]
         public void Path_NestedDirectory_ReturnsCorrectPath()
         {
-
             var folder1 = _rootDirectory.CreateDirectory("folder1");
             var folder2 = folder1.CreateDirectory("folder2");
             folder2.CreateFile("file.txt");
@@ -78,7 +65,6 @@ namespace InMemoryFileSys.Tests
 
             Assert.IsNotNull(path);
             Assert.That(path, Is.EqualTo("/folder1/folder2"));
-
         }
 
         [Test]

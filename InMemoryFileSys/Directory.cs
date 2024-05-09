@@ -30,7 +30,7 @@ public class Directory : IDirectory
     
     private const string slash = "/";
     
-    private Directory(string? name, IClock clock, Directory? parentDirectory)
+    private Directory(string name, IClock clock, Directory? parentDirectory)
     {
         _clock = clock ?? throw new ArgumentNullException(nameof(clock));
 
@@ -41,10 +41,16 @@ public class Directory : IDirectory
 
         if (parentDirectory == null)
         {
+            Name = name; 
             Path = slash;
         }
         else
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("Directory name must not be null or empty for non-root directories.");
+            }
+            Name = name;
             Path = parentDirectory.Path.EndsWith(slash) ? parentDirectory.Path + name : parentDirectory.Path + slash + name;
         }
 
